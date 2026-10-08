@@ -49,7 +49,7 @@ export default function LoginPage() {
             }
 
             const data: LoginResponse = await response.json()
-            setAccessToken(data.accessToken)
+            setAccessToken(data.accessToken, data.expiresIn)
             form.reset()
         } catch {
             setErrorMessage("알 수 없는 에러 발생")
@@ -59,7 +59,7 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="flex min-h-screen items-center justify-center p-4">
+        <div className="flex items-center justify-center p-4">
             <Card className="w-full max-w-md">
                 <CardHeader>
                     <CardTitle>로그인</CardTitle>
@@ -95,7 +95,7 @@ export default function LoginPage() {
                         )}
 
                         {accessToken && (
-                            <p className="text-sm text-green-700">로그인 성공 {accessToken}</p>
+                            <p className="text-sm text-green-700">{accessToken}</p>
                         )}
 
                         <Button type="submit" className="w-full" disabled={isSubmitting}>

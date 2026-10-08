@@ -3,7 +3,7 @@
 // auth store를 하위 컴포넌트에 전달하고, useAuthStore()는 그 저장소에서 필요한 값을 읽는 함수
 
 import { createAuthStore } from "@/stores/auth-stores"
-import { createContext, ReactNode, useContext, useState } from "react"
+import { createContext, ReactNode, useContext, useEffect, useState } from "react"
 import { useStore } from "zustand"
 
 type AuthStore = ReturnType<typeof createAuthStore>
@@ -13,6 +13,11 @@ const AuthStoreContext = createContext<AuthStore | null>(null)
 
 export function AuthStoreProvider({ children }: { children: ReactNode }) {
     const [store] = useState(() => createAuthStore())
+
+    // 브라우저에서 마운트된 뒤 쿠키에 저장된 토큰을 Zustand로 복원
+    useEffect(() => {
+        store.getState().restoreAccessToken()
+    }, [store])
 
     return (
         <AuthStoreContext.Provider value={store}>
