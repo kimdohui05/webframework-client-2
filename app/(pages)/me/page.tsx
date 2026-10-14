@@ -1,5 +1,6 @@
 "use client"
 
+import { getMe } from "@/lib/api/user-account"
 import { useAuthStore } from "@/providers/auth-store-provider"
 import { MeResult } from "@/type/user"
 import Link from "next/link"
@@ -18,25 +19,9 @@ export default function MePage() {
 
         async function loadme() {
             try {
-                const response = await fetch("http://localhost:8080/user-account/me", {
-                    headers : {
-                        Authorization:`Bearer ${accessToken}`
-                    },
-                    cache : "no-store"
-                })
+                const data = await getMe(accessToken as string)
 
-                if (!response.ok) {
-                    if (response.status === 401) {
-                        throw new Error ("다시 시도해주세요")
-                    }
-                    if (response.status === 403) {
-                        throw new Error ("접근 권한이 없습니다.")
-                    }
-
-                    throw new Error (`내 정보 조회 실패 ${response.status}`)
-                }
-                
-                setResult({ token : accessToken as string, data : await response.json()})
+                setResult({ token : accessToken as string, data : data})
             } catch ( error ) {
                 setResult({
                     token : accessToken as string, data : null, error : error instanceof Error? error.message : "서버 연결을 확인해주세요."
@@ -58,7 +43,7 @@ export default function MePage() {
         <div className="space-y-8">
             <h1 className="text-2xl font-bold"> 내 정보 </h1>
 
-            <div className="space-y-2 reunded-lg border p-6">
+            <div className="space-y-2 rounded-lg border p-6">
                 <p>회원ID : { result?.data?.id }</p>
                 <p>이메일 : { result?.data?.email }</p>
                 <p>닉네임 : { result?.data?.nickname }</p>
